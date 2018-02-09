@@ -5,10 +5,11 @@ import ErrorField from './ErrorField'
 
 class SignUpForm extends Component {
   render() {
+    const {handleSubmit} = this.props
     return (
       <div>
         <h2>Sign Up</h2>
-        <form>
+        <form onSubmit={handleSubmit}>
           <Field name='email' component={ErrorField}/>
           <Field name='password' component={ErrorField} type='password'/>
           <div>
@@ -19,6 +20,7 @@ class SignUpForm extends Component {
     );
   }
 }
+
 
 const validate = ({email, password}) => {
   const errors = {}
