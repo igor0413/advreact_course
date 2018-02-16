@@ -3,11 +3,15 @@ import reducer from './reducer'
 import logger from 'redux-logger'
 import thunk from 'redux-thunk'
 import {routerMiddleware} from 'react-router-redux'
+import createSagaMiddleware from 'redux-saga'
 import history from '../history'
+import {saga} from '../ducks/people'
 
-const enhancer = applyMiddleware(routerMiddleware(history), thunk, logger)
+const sagaMiddleware = createSagaMiddleware()
+const enhancer = applyMiddleware(sagaMiddleware, routerMiddleware(history), thunk, logger)
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
 const store = createStore(reducer, {}, composeEnhancers(enhancer))
+
+sagaMiddleware.run(saga)
 
 export default store

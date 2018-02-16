@@ -1,3 +1,4 @@
+import 'babel-polyfill'
 import React, {Component} from 'react'
 import Root from './components/Root'
 import store from './redux'
