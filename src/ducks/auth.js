@@ -1,7 +1,7 @@
 import firebase from 'firebase'
 import {appName} from '../config'
 import {Record} from 'immutable'
-//import store from '../redux'
+import {all, call, put, take} from 'redux-saga/effects'
 
 const ReducerRecord = Record({
   user: null,
@@ -40,6 +40,35 @@ export default function reducer(state = new ReducerRecord(), action) {
 }
 
 export function signUp(email, password) {
+  return {
+    type: SIGN_UP_REQUEST,
+    payload: {email, password}
+  }
+}
+
+export const signUpSaga = function* () {
+  const auth = firebase.auth()
+
+  while(true) {
+    const action = yield take(SIGN_UP_REQUEST)
+    const {email, password} = action.payload
+
+    try {
+      const user = yield call([auth, auth.createUserWithEmailAndPassword], email, password)
+      yield put({
+        type: SIGN_UP_SUCCESS,
+        payload: {user}
+      })
+    } catch (error) {
+      yield put({
+        type: SIGN_UP_ERROR,
+        error
+      })
+    }
+  }
+}
+
+/*export function signUp(email, password) {
   return (dispatch) => {
     dispatch({
       type: SIGN_UP_REQUEST
@@ -55,7 +84,7 @@ export function signUp(email, password) {
         error
       }))
   }
-}
+}*/
 
 firebase.auth().onAuthStateChanged(user => {
   const store = require('../redux').default
@@ -64,3 +93,9 @@ firebase.auth().onAuthStateChanged(user => {
     payload: {user}
   })
 })
+
+export const saga = function* () {
+  yield all([
+    signUpSaga()
+  ])
+}
