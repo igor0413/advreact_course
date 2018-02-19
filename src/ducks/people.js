@@ -2,6 +2,7 @@ import {Record, List} from 'immutable'
 import {appName} from '../config'
 import {put, call, takeEvery} from 'redux-saga/effects'
 import {generateId} from './utils'
+import {reset} from 'redux-form'
 
 const ReducerState = Record({
   entities: List([])
@@ -43,6 +44,8 @@ export const addPersonSaga = function* (action) {
     type: ADD_PERSON,
     payload: {...action.payload, id}
   })
+
+  yield put(reset('person'))
 }
 
 // export const addPerson = (person) => {
