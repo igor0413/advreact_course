@@ -1,7 +1,7 @@
 import firebase from 'firebase'
 import {appName} from '../config'
 import {Record} from 'immutable'
-import {all, call, cps, put, take} from 'redux-saga/effects'
+import {all, call, cps, put, take, takeEvery} from 'redux-saga/effects'
 
 export const ReducerRecord = Record({
   user: null,
