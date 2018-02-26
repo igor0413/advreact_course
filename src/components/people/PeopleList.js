@@ -1,49 +1,33 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react'
+import {List} from 'react-virtualized'
 import {connect} from 'react-redux'
-import {moduleName, peopleListSelector, fetchAllPeople} from '../../ducks/people'
-import {Table, Column} from 'react-virtualized'
-import 'react-virtualized/styles.css'
+import {peopleListSelector, fetchAllPeople} from '../../ducks/people'
+import PersonCard from './PersonCard'
 
 class PeopleList extends Component {
 
   componentDidMount() {
-    this.props.fetchAllPeople && this.props.fetchAllPeople()
+    this.props.fetchAllPeople()
   }
 
   render() {
     return (
-      <Table
-        width = {600}
-        height = {300}
-        rowHeight = {40}
-        headerHeight = {50}
-        rowGetter = {this.rowGetter}
-        rowCount = {this.props.people.length}
-        overscanRowCount = {2}
-        rowClassName = "test--people-list__row"
-      >
-        <Column
-          label = "First Name"
-          dataKey = "firstName"
-          width = {200}
-        />
-        <Column
-          label = "Last Name"
-          dataKey = "lastName"
-          width = {200}
-        />
-        <Column
-          label = "Email"
-          dataKey = "email"
-          width = {200}
-        />
-      </Table>
+      <List
+        rowCount={this.props.people.length}
+        rowHeight={100}
+        height={300}
+        width={200}
+        rowRenderer={this.rowRenderer}
+      />
     )
   }
 
-  rowGetter = ({index}) => {
-    console.log('-------',index,'----', this.props.people[index])
-    return this.props.people[index]
+  rowRenderer = ({ index, key, style }) => {
+    return <PersonCard
+      person={this.props.people[index]}
+      key={key}
+      style={style}
+    />
   }
 }
 
