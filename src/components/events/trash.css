@@ -1,0 +1,10 @@
+.trash {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    border: 1px solid black;
+    background: url(../../assests/icons/trashIcon.svg) no-repeat 50% 50%;
+    background-size: 70%;
+}

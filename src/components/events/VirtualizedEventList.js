@@ -4,6 +4,8 @@ import {moduleName, fetchLazy, eventListSelector, selectEvent} from '../../ducks
 import Loader from '../common/Loader'
 import {Table, Column, InfiniteLoader} from 'react-virtualized'
 import 'react-virtualized/styles.css'
+import Trash from './Trash'
+import TableRow from './TableRow'
 
 class EventList extends Component {
 
@@ -16,40 +18,48 @@ class EventList extends Component {
     const {loaded, events} = this.props
     // if (loading) return <Loader/>
     return (
-      <InfiniteLoader
-        isRowLoaded={this.isRowLoaded}
-        rowCount={loaded ? events.length : events.length + 1}
-        loadMoreRows={this.loadMoreRows}
-      >
-        {({onRowsRendered, registerChild}) =>
-          <Table
-            rowCount={events.length}
-            ref={registerChild}
-            rowGetter={this.rowGetter}
-            rowHeight={40}
-            headerHeight={50}
-            overscanRowCount={5}
-            width={700}
-            height={300}
-            onRowClick={this.handleRowClick}
-            onRowsRendered={onRowsRendered}
-          >
-            <Column label="title"
-                    dataKey="title"
-                    width={300}
-            />
-            <Column label="where"
-                    dataKey="where"
-                    width={250}
-            />
-            <Column label="when"
-                    dataKey="month"
-                    width={150}
-            />
-          </Table>
-        }
-      </InfiniteLoader>
+      <div>
+        <Trash/>
+        <InfiniteLoader
+          isRowLoaded={this.isRowLoaded}
+          rowCount={loaded ? events.length : events.length + 1}
+          loadMoreRows={this.loadMoreRows}
+        >
+          {({onRowsRendered, registerChild}) =>
+            <Table
+              rowCount={events.length}
+              ref={registerChild}
+              rowGetter={this.rowGetter}
+              rowHeight={40}
+              headerHeight={50}
+              overscanRowCount={5}
+              width={700}
+              height={300}
+              onRowClick={this.handleRowClick}
+              onRowsRendered={onRowsRendered}
+              rowRenderer={this.getRowRenderer}
+            >
+              <Column label="title"
+                      dataKey="title"
+                      width={300}
+              />
+              <Column label="where"
+                      dataKey="where"
+                      width={250}
+              />
+              <Column label="when"
+                      dataKey="month"
+                      width={150}
+              />
+            </Table>
+          }
+        </InfiniteLoader>
+      </div>
     );
+  }
+
+  getRowRenderer = (props) => {
+    return <TableRow {...props}/>
   }
 
   loadMoreRows = () => {
