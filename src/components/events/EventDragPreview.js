@@ -6,11 +6,13 @@ class EventDragPreview extends Component {
   render() {
     return (
       <div>
-        {this.props.event.title}
+        <h1>{this.props.event.title}</h1>
       </div>
     );
   }
 }
+
+
 
 export default connect((state, props) => {
   return {

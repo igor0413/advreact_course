@@ -13,15 +13,14 @@ import HTML5Backend from 'react-dnd-html5-backend'
 class App extends Component {
   render() {
     return (
-      <Provider store={store}>
-        <ConnectedRouter history={history}>
-          <DragDropContextProvider backend={HTML5Backend}>
+      <Provider store = {store}>
+        <DragDropContextProvider backend={HTML5Backend}>
+          <ConnectedRouter history={history}>
             <Root/>
-          </DragDropContextProvider>
-        </ConnectedRouter>
+          </ConnectedRouter>
+        </DragDropContextProvider>
       </Provider>
     )
-      ;
   }
 }
 
