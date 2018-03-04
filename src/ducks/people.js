@@ -1,7 +1,7 @@
 import {Record, OrderedMap} from 'immutable'
 import {appName} from '../config'
-import {all, put, call, takeEvery, select, fork, spawn, cancel, cancelled} from 'redux-saga/effects'
-import {delay} from 'redux-saga'
+import {all, put, call, takeEvery, select, fork, spawn, cancel, cancelled, take} from 'redux-saga/effects'
+import {delay, eventChannel} from 'redux-saga'
 import {fbDatatoEntities} from './utils'
 import {reset} from 'redux-form'
 import {createSelector} from 'reselect'
@@ -154,15 +154,58 @@ export const backgroundSyncSaga = function* () {
   }
 }
 
-export const cancellableSync = function* () {
-  yield race({
-    sync: backgroundSyncSaga(),
-    delay: delay(6000)
-  })
 
-/*  const task = yield fork(backgroundSyncSaga)
-  yield delay(6000)
-  yield cancel(task)*/
+export const cancellableSync = function * () {
+  let task
+  while (true) {
+    const {payload} = yield take('@@router/LOCATION_CHANGE')
+
+    if (payload && payload.pathname.includes('people')) {
+      task = yield fork(realtimeSync)
+      /*
+                  yield race({
+                      sync: realtimeSync(),
+                      delay: delay(6000)
+                  })
+      */
+    } else if (task) {
+      yield cancel(task)
+    }
+  }
+
+  /*
+      const task = yield fork(backgroundSyncSaga)
+      yield delay(6000)
+      yield cancel(task)
+  */
+}
+
+const createPeopleSocket = () => eventChannel(emmit => {
+  const ref = firebase.database().ref('people')
+  const callback = (data) => emmit({ data })
+  ref.on('value', callback)
+
+  return () => {
+    console.log('---', 'unsubscribing')
+    ref.off('value', callback)
+  }
+})
+
+export const realtimeSync = function * () {
+  const chan = yield call(createPeopleSocket)
+  try {
+    while (true) {
+      const {data} = yield take(chan)
+
+      yield put({
+        type: FETCH_ALL_SUCCESS,
+        payload: data.val()
+      })
+    }
+  } finally {
+    yield call([chan, chan.close])
+    console.log('---', 'cancelled realtime saga')
+  }
 }
 
 export const saga = function* () {
