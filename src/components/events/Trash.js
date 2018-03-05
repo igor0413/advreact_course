@@ -3,6 +3,8 @@ import './trash.css'
 import {DropTarget} from 'react-dnd'
 import {connect} from 'react-redux'
 import {deleteEvent, stateSelector} from '../../ducks/events'
+import {Motion, spring, presets} from 'react-motion'
+
 
 class Trash extends Component {
 
@@ -17,11 +19,9 @@ class Trash extends Component {
     const style= {
       border: `1px solid ${this.getColor(canDrop, isOver)}`
     }
-    return (
-      connectDropTarget(
-        <div style={style} className='trash'/>
-      )
-    )
+    return <Motion defaultStyle={{opacity: 0}} style={{opacity: spring(1, { stiffness: 5, damping: 14 })}}>
+      {interpolatedStyle => connectDropTarget(<div style={{...style, ...interpolatedStyle}} className='trash'/>)}
+    </Motion>
   }
 }
 
